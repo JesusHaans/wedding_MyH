@@ -3,13 +3,24 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   run_pull:
-    name: run pull
+    name: Run Pull
     runs-on: ubuntu-latest
 
     steps:
-      - name: executing remote ssh commands using ssh key
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Executing remote SSH commands using SSH key
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -17,8 +28,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ secrets.WORK_DIR }} 
-            git fetch 
-            git checkout ${{ secrets.MAIN_BRANCH }} 
-            git pull 
+            cd ${{ secrets.WORK_DIR }}
+            git fetch
+            git checkout ${{ secrets.MAIN_BRANCH }}
+            git pull
             exit
