@@ -2,34 +2,23 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   run_pull:
-    name: Run Pull
+    name: uodate code on vps
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-
       - name: Executing remote SSH commands using SSH key
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.ACCESS_KEY }}
+          port: 22
           script: |
-            cd ${{ secrets.WORK_DIR }}
+            cd /var/www/wedding_MyH
             git fetch
-            git checkout ${{ secrets.MAIN_BRANCH }}
-            git pull
+            git checkout main
+            git pull origin main
             exit
