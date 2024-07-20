@@ -6,7 +6,7 @@ on:
 jobs:
   run_pull:
     name: uodate code on vps
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Executing remote SSH commands using SSH key
